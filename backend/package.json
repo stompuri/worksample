@@ -14,6 +14,7 @@
   },
   "author": "Seppo Tompuri",
   "license": "MIT",
+  "engines" : { "node" : ">=10.2.1" },
   "bugs": {
     "url": "https://github.com/stompuri/worksample/issues"
   },
