@@ -52,7 +52,7 @@ _.get('/projects/:id', async ctx => {
 });
 
 _.delete('/projects/:id', async ctx => {
-  await deleteProject(ctx.params.id);
+  ctx.body = await deleteProject(ctx.params.id);
 });
 
 _.post('/projects', koaBody(), async ctx => {
