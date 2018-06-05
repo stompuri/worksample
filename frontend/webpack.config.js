@@ -1,18 +1,20 @@
 const webpack = require('webpack');
-const path = require('path');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const TransferWebpackPlugin = require('transfer-webpack-plugin');
 //const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
+const htmlPlugin = new HtmlWebPackPlugin({
+  template: "./views/index.html",
+  filename: "./index.html"
+});
+
 module.exports = {
   entry: [
     'babel-polyfill',
-    './src/index.jsx'
+    './src/app.jsx'
   ],
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
-    filename: 'index.js'
+    filename: './bundle.js'
   },
   devServer: {
     contentBase: './dist'
@@ -39,16 +41,13 @@ module.exports = {
     ]
   },
   plugins: [
+    htmlPlugin,
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
-    new TransferWebpackPlugin([
-      { from: 'src/web' },
-    ], '.'),
-    new HtmlWebPackPlugin({ template: 'src/web/index.html' }),
     new webpack.DefinePlugin({
       'process.env': {
-        ENDPOINT: JSON.stringify(process.env.ENDPOINT || 'http://localhost:9000'),
+        ENDPOINT: JSON.stringify(process.env.ENDPOINT || 'https://simple-react-nodejs-fullstack.appspot.com'),
       },
-    }),
+    })
   ]
 };

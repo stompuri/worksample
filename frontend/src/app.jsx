@@ -7,7 +7,7 @@ const baseURL = process.env.ENDPOINT;
 
 const getProjectsFromApi = async () => {
   try {
-    const uri = `${baseURL}/projects`;
+    const uri = encodeURI(`${baseURL}/projects`);
     const response = await fetch(uri);
     return response.json();
   } catch (error) {
@@ -18,9 +18,28 @@ const getProjectsFromApi = async () => {
 
 const deleteProjectViaApi = async (id) => {
   try {
-    const uri = `${baseURL}/projects/${id}`;
+    const uri = encodeURI(`${baseURL}/projects/${id}`);
     const params = {
       method: 'DELETE'
+    };
+    const response = await fetch(uri, params);
+
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+  return {};
+};
+
+const editProjectViaApi = async (id, data) => {
+  try {
+    const uri = `${baseURL}/projects/${id}`;
+    const params = {
+      body: data,
+      headers: {
+        'content-type': 'text/plain'
+      },
+      method: 'PUT'
     };
     const response = await fetch(uri, params);
     return response.json();
@@ -122,6 +141,34 @@ class AddProjectForm extends React.Component {
   }
 }
 
+class EditProjectForm extends React.Component {
+  editProject(e) {
+    e.preventDefault();
+    const projectId = this.refs.editId.value;
+    const projectName = this.refs.editName.value;
+    //call the editProject method from the App component if we have a value
+    if (typeof project === 'string' && project.length > 0) {
+      this.props.renameProject(projectId, projectName);
+      //reset the form
+      this.refs.projectEditForm.reset();
+    }
+  }
+
+  render() {
+   return(
+     <form ref="projectEditForm" onSubmit={this.editProject.bind(this)}>
+     <div>
+       <label htmlFor="editId">Id to edit</label>
+       <input type="text" id="editId" placeholder="#id" ref="editId"/>
+       <label htmlFor="editItem">New Name</label>
+       <input type="text" id="editItem" placeholder="new name" ref="editName"/>
+     </div>
+     <button type="submit">Change name</button>
+    </form>
+   )
+  }
+}
+
 class Worksample extends React.Component {
   constructor(props) {
     super(props);
@@ -137,18 +184,58 @@ class Worksample extends React.Component {
     this.setState({ projects: projects });
   }
 
+  getKeyWithId(id) {
+    for (var key in this.state.projects) {
+      if (this.state.projects.hasOwnProperty(key)) {
+        if (this.state.projects[key].id == id.toString())
+        return key;
+      }
+    }
+    return id;
+  }
+
   async deleteProject(id) {
-    const response = await deleteProjectViaApi(id);
+    const key = this.getKeyWithId(id);
+    const response = await deleteProjectViaApi(key);
     this.componentWillMount();
+    return response;
+  }
+
+  generateId() {
+    var projects = this.state.projects;
+    projects = Object.keys(projects).map(function(k) { return projects[k] });
+
+    const length = Object.keys(projects).length + 1;
+    var id = 1;
+    for (var i = 0; i < length-1; i++) {
+      if (id <= projects[i].id)
+        id = (parseInt(projects[i].id, 10) + 1).toString();
+    }
+    return id;
+  }
+
+  async renameProject(id, name) {
+    var project = { "name": name };
+    const response = await editProjectViaApi(id, JSON.stringify(project));
+
+    var projects = this.state.projects;
+    projects = Object.keys(projects).map(function(k) { return projects[k] });
+
+    // Append the added item to this.state.projects
+    this.setState({ projects: [...projects, project] });
   }
 
   async addProject(name) {
     // todo: type is now always undefined
-    var project = { "name": name, "type": "undefined" };
-    const response = await addProjectViaApi(project);
-    project.id = response.id;
+    const id = this.generateId();
+    var project = { "id": id, "name": name, "type": "undefined" };
+    const response = await addProjectViaApi(JSON.stringify(project));
+
+    var projects = this.state.projects;
+    projects = Object.keys(projects).map(function(k) { return projects[k] });
+
     // Append the added item to this.state.projects
-    this.setState({ projects: [...this.state.projects, project] });
+    this.setState({ projects: [...projects, project] });
   }
 
   render() {

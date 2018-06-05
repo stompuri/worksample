@@ -1,30 +1,31 @@
 {
-  "name": "worksample-backend",
+  "name": "worksample-frontend",
   "version": "0.0.1",
-  "description": "Backend for the worksample (simple sample of frontend-backend-database)",
-  "main": "index.js",
+  "description": "Frontend for the worksample (simple sample of frontend-backend-database",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js",
-    "start-server": "./node_modules/.bin/json-server db.json",
-    "lint": "eslint *.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stompuri/worksample.git"
   },
   "author": "Seppo Tompuri",
+  "engines": {
+    "node": ">0.10.0"
+  },
   "license": "MIT",
-  "engines" : { "node" : ">=10.2.1" },
   "bugs": {
     "url": "https://github.com/stompuri/worksample/issues"
   },
   "homepage": "https://github.com/stompuri/worksample#readme",
   "dependencies": {
-    "json-server": "^0.13.0",
+    "firebase": "^5.0.4",
+    "forever": "^0.15.3",
     "kcors": "^2.2.1",
     "koa": "^2.5.1",
-    "koa-router": "^7.4.0",
     "koa-body": "^2.6.0",
+    "koa-router": "^7.4.0",
     "node-fetch": "^2.1.2"
   }
 }
