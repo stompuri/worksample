@@ -25,7 +25,7 @@ https://github.com/stompuri/worksample
 ```
 cd frontend
 npm install
-start-dev": "webpack-dev-server --config ./webpack.config.js --mode development
+npm run start-dev": "webpack-dev-server --config ./webpack.config.js --mode development
 ```
 
 **Backend**
